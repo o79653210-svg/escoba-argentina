@@ -64,7 +64,7 @@ button:focus-visible,a:focus-visible{outline:3px solid #fff;outline-offset:2px}
 <!-- 2. VALORES -->
 <section id="valores" class="max-w-6xl mx-auto px-4 py-16">
   <h2 class="rv">El valor de cada carta</h2>
-  <p class="rv mb-6 max-w-2xl">Tocá una carta para ver su valor en el juego. Ojo: las figuras no valen lo que dice su número.</p>
+  <p class="rv mb-6 max-w-2xl">Tocá una carta para ver su valor en el juego. Ojo: las figuras no valen lo que dice su número. Las cartas con sello VELO (1, 7 y 12 de oros) dan un punto cada una a quien las junta.</p>
   <div id="vals" class="grid grid-cols-2 sm:grid-cols-5 gap-5"></div>
   <div class="panel rv p-5 mt-8 max-w-3xl">
     <h3 class="gold text-xl font-bold mb-2">¿Por qué la Sota vale 8, el Caballo 9 y el Rey 10?</h3>
@@ -128,7 +128,7 @@ function card(s,n){
   const c='#'+{o:'7a5200',c:'8f1d14',e:'1c3f78',b:'1d5a1d'}[s];let b;
   if(n<=7){const z=n==1?46:24;b=P[n].map(([x,y])=>`<use href="#s${s}" x="${x-z/2}" y="${y-z/2}" width="${z}" height="${z}"/>`).join('')}
   else b=`<use href="#s${s}" x="25" y="45" width="50" height="50"/><text x="50" y="34" text-anchor="middle" font-size="20">${{10:'🛡️',11:'🐎',12:'👑'}[n]}</text><text x="50" y="118" text-anchor="middle" font-size="10" font-weight="700" fill="${c}">${NM[n].toUpperCase()}</text>`;
-  return `<svg viewBox="0 0 100 150" role="img" aria-label="${NM[n]||n} de ${SU[s]}"><rect x="2" y="2" width="96" height="146" rx="9" fill="#fbf3dc" stroke="${c}" stroke-width="3"/><rect x="8" y="8" width="84" height="134" rx="6" fill="none" stroke="${c}" stroke-opacity=".35"/><text x="13" y="24" font-size="15" font-weight="700" fill="${c}" font-family="Georgia">${n}</text><text x="87" y="140" text-anchor="end" font-size="15" font-weight="700" fill="${c}" font-family="Georgia">${n}</text>${b}</svg>`}
+  return `<svg viewBox="0 0 100 150" role="img" aria-label="${NM[n]||n} de ${SU[s]}"><rect x="2" y="2" width="96" height="146" rx="9" fill="#fbf3dc" stroke="${c}" stroke-width="3"/><rect x="8" y="8" width="84" height="134" rx="6" fill="none" stroke="${c}" stroke-opacity=".35"/><text x="13" y="24" font-size="15" font-weight="700" fill="${c}" font-family="Georgia">${n}</text><text x="87" y="140" text-anchor="end" font-size="15" font-weight="700" fill="${c}" font-family="Georgia">${n}</text>${b}${s=='o'&&[1,7,12].includes(n)?'<text x="50" y="136" text-anchor="middle" font-size="9" font-weight="700" fill="#a67c00" letter-spacing="1">VELO</text>':''}</svg>`}
 const back=()=>`<svg viewBox="0 0 100 150"><rect x="2" y="2" width="96" height="146" rx="9" fill="#9b1c1c" stroke="#f3d98b" stroke-width="3"/><rect x="10" y="10" width="80" height="130" rx="5" fill="none" stroke="#f3d98b" stroke-dasharray="3 3"/><use href="#so" x="30" y="55" width="40" height="40"/></svg>`;
 
 /* ===== Sonido (Web Audio API, sin archivos) ===== */
@@ -155,7 +155,7 @@ gsap.to('#fl',{yPercent:-25,ease:'none',scrollTrigger:{trigger:'#hero',scrub:tru
 
 /* ===== Valores ===== */
 [1,2,3,4,5,6,7,10,11,12].forEach((n,i)=>{
-  const s='ocebo'[i%4],d=el(`<div class="pc !w-full max-w-[7rem] mx-auto">${card(s,n)}</div><p class="mt-2 font-bold">${NM[n]||n} (${n})</p><p class="gold" data-v>= ${V(n)}${n>7?' puntos':''}</p>`,'rv text-center');
+  const s=[1,7,12].includes(n)?'o':'ocebo'[i%4],d=el(`<div class="pc !w-full max-w-[7rem] mx-auto">${card(s,n)}</div><p class="mt-2 font-bold">${NM[n]||n} (${n})</p><p class="gold" data-v>= ${V(n)}${n>7?' puntos':''}</p>`,'rv text-center');
   d.firstChild.onclick=()=>{snd('card');gsap.fromTo(d.firstChild,{rotationY:0,scale:1.12},{rotationY:360,scale:1,duration:.6});gsap.fromTo(d.querySelector('[data-v]'),{scale:1.6},{scale:1,duration:.4})};
   $('vals').append(d)});
 
@@ -170,11 +170,11 @@ gsap.to('#fl',{yPercent:-25,ease:'none',scrollTrigger:{trigger:'#hero',scrub:tru
 
 /* ===== Puntos ===== */
 $('tabla').innerHTML='<tr class="gold border-b border-yellow-700/40"><th class="p-3">Punto</th><th>Vale</th><th class="pr-3">Quién lo gana</th></tr>'+
-[['Cartas','1','Quien juntó más cartas en total.'],['Oros','1','Quien juntó más cartas de oro.'],['Siete velo (7 de oro)','1','Punto propio; además cuenta para oros, sietes y cartas.'],['Sietes','1','Quien juntó más sietes.'],['Escobas','1 c/u','Cada vez que dejás la mesa vacía.']]
+[['Cartas','1','Quien juntó más cartas en total.'],['Oros','1','Quien juntó más cartas de oro.'],['Velos: 7, As y Rey de oro','1 c/u','Cada velo que juntes da un punto propio y además cuenta para cartas y oros (el 7 también para sietes).'],['Sietes','1','Quien juntó más sietes.'],['Escobas','1 c/u','Cada vez que dejás la mesa vacía.']]
 .map(r=>`<tr class="border-b border-yellow-700/20"><td class="p-3 font-bold">${r[0]}</td><td>${r[1]}</td><td class="pr-3">${r[2]}</td></tr>`).join('');
 
 /* ===== Estrategia ===== */
-[['o','Guardá los sietes','Combinan con muchas cartas (7 + Sota = 15) y valen un punto.'],['e','No regales escobas','Evitá dejar la mesa sumando 15 con una sola carta.'],['c','Contá los oros','Son 10: con 6 asegurás el punto de oros.'],['b','Protegé el 7 de oro','Es la carta más valiosa: levantala antes que tu rival.']]
+[['o','Guardá los sietes','Combinan con muchas cartas (7 + Sota = 15) y valen un punto.'],['e','No regales escobas','Evitá dejar la mesa sumando 15 con una sola carta.'],['c','Contá los oros','Son 10: con 6 asegurás el punto de oros.'],['b','Protegé los velos','El 7, el As y el Rey de oro valen un punto cada uno: levantalos antes que tu rival.']]
 .forEach(([s,t,x])=>$('tips').append(el(`<svg viewBox="0 0 24 24" class="w-10 h-10 mb-2"><use href="#s${s}"/></svg><h3 class="font-bold gold">${t}</h3><p>${x}</p>`,'panel rv p-4')));
 
 /* ===== Partida: puntos acumulados hasta 15 ===== */
@@ -186,7 +186,7 @@ let G;const hm=$('hm'),hb=$('hb'),tbl=$('tbl'),msg=$('msg'),say=t=>msg.textConte
 sum=a=>a.reduce((t,c)=>t+c.v,0),
 shuf=a=>{for(let i=a.length;i>1;){const j=Math.random()*i--|0;[a[i],a[j]]=[a[j],a[i]]}return a},
 deal=()=>{for(let i=0;i<3;i++)G.h.forEach(h=>h.push(G.deck.pop()))},
-stat=p=>{const c=G.cap[p];return{c:c.length,o:c.filter(x=>x.s=='o').length,s:c.filter(x=>x.n==7).length,v:c.some(x=>x.s=='o'&&x.n==7)?1:0,e:G.esc[p]}},
+stat=p=>{const c=G.cap[p];return{c:c.length,o:c.filter(x=>x.s=='o').length,s:c.filter(x=>x.n==7).length,v:c.filter(x=>x.s=='o'&&[1,7,12].includes(x.n)).length,e:G.esc[p]}},
 pts=()=>{const a=stat(0),b=stat(1),p=[a.e+a.v,b.e+b.v];['c','o','s'].forEach(k=>{if(a[k]>b[k])p[0]++;else if(b[k]>a[k])p[1]++});return p};
 function combos(c,t){const r=[];for(let m=1;m<1<<t.length;m++){const s=[];let sm=c.v;t.forEach((x,i)=>{if(m>>i&1){s.push(i);sm+=x.v}});if(sm==15)r.push(s)}return r}
 function newGame(){const d=[];for(const s of 'oceb')for(const n of [1,2,3,4,5,6,7,10,11,12])d.push({s,n,v:V(n)});shuf(d);
@@ -197,7 +197,7 @@ function draw(){
   hb.replaceChildren(...G.h[1].map(c=>mk(c,1)));
   tbl.replaceChildren(...G.table.map((c,i)=>{const e=mk(c);G.ts.includes(i)&&e.classList.add('sel');e.onclick=()=>tg(i);return e}));
   const a=stat(0),b=stat(1),p=pts();
-  $('scr').innerHTML=`<table class="w-full text-center"><tr class="gold"><th></th><th>Vos</th><th>Máquina</th></tr>${[['Cartas','c'],['Oros','o'],['Sietes','s'],['7 de oro','v'],['Escobas','e']].map(([l,k])=>`<tr><td class="text-left">${l}</td>${[a,b].map((s,i)=>{const w=s[k]>(i?a:b)[k];return `<td class="${w?'gold font-bold':''}">${s[k]}${w?' ●':''}</td>`}).join('')}</tr>`).join('')}<tr class="border-t border-yellow-700/40"><td class="text-left">Puntos de la ronda</td><td>${p[0]}</td><td>${p[1]}</td></tr><tr class="font-bold gold"><td class="text-left">Partida (a 15)</td><td>${T[0]}</td><td>${T[1]}</td></tr></table>`;
+  $('scr').innerHTML=`<table class="w-full text-center"><tr class="gold"><th></th><th>Vos</th><th>Máquina</th></tr>${[['Cartas','c'],['Oros','o'],['Sietes','s'],['Velos (1 c/u)','v'],['Escobas (1 c/u)','e']].map(([l,k])=>`<tr><td class="text-left">${l}</td>${[a,b].map((s,i)=>{const w='ve'.includes(k)?0:s[k]>(i?a:b)[k];return `<td class="${w||('ve'.includes(k)&&s[k])?'gold font-bold':''}">${s[k]}${w?' ●':''}</td>`}).join('')}</tr>`).join('')}<tr class="border-t border-yellow-700/40"><td class="text-left">Puntos de la ronda</td><td>${p[0]}</td><td>${p[1]}</td></tr><tr class="font-bold gold"><td class="text-left">Partida (a 15)</td><td>${T[0]}</td><td>${T[1]}</td></tr></table>`;
   $('mazo').textContent='Mazo: '+G.deck.length;info()}
 function pick(i){if(G.busy||G.turn||G.over)return;G.sel=G.sel===i?null:i;G.ts=[];snd('btn');draw()}
 function tg(i){if(G.busy||G.turn||G.over||G.sel===null)return;const k=G.ts.indexOf(i);k<0?G.ts.push(i):G.ts.splice(k,1);snd('btn');draw()}
@@ -230,8 +230,8 @@ function escoba(p){
 function bot(){
   const t=G.table;let best,bs=-1,low=0,ls=99;
   G.h[1].forEach((c,i)=>{
-    combos(c,t).forEach(m=>{const g=[c,...m.map(j=>t[j])];const s=g.length+g.reduce((a,x)=>a+(x.s=='o'?3:0)+(x.n==7?4:0)+(x.n==7&&x.s=='o'?6:0),0)+(m.length==t.length?9:0);if(s>bs){bs=s;best=[i,m]}});
-    const k=(c.s=='o'?3:0)+(c.n==7?5:0)+(c.s=='o'&&c.n==7?9:0);if(k<ls){ls=k;low=i}});
+    combos(c,t).forEach(m=>{const g=[c,...m.map(j=>t[j])];const s=g.length+g.reduce((a,x)=>a+(x.s=='o'?3:0)+(x.n==7?4:0)+(x.s=='o'&&(x.n==1||x.n==12)?5:0)+(x.n==7&&x.s=='o'?6:0),0)+(m.length==t.length?9:0);if(s>bs){bs=s;best=[i,m]}});
+    const k=(c.s=='o'?3:0)+(c.n==7?5:0)+(c.s=='o'&&c.n==7?9:0)+(c.s=='o'&&(c.n==1||c.n==12)?7:0);if(k<ls){ls=k;low=i}});
   best?move(1,...best):move(1,low,[])}
 function finish(){
   if(G.last>=0)G.cap[G.last].push(...G.table);G.table=[];const p=pts();T[0]+=p[0];T[1]+=p[1];draw();
