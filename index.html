@@ -106,7 +106,7 @@ button:focus-visible,a:focus-visible{outline:3px solid #fff;outline-offset:2px}
   </div>
   <p id="msg" class="mt-4 text-center min-h-[1.5rem] gold" aria-live="polite"></p>
   <div class="flex flex-wrap justify-center gap-3 my-3"><button id="up" class="btn" disabled>Levantar</button><button id="dr" class="btn" disabled>Tirar</button><button id="ng" class="btn btn2">Nueva ronda</button><button id="rg" class="btn btn2">Reiniciar partida</button><span id="mazo" class="self-center text-sm"></span></div>
-  <div id="sb" class="panel p-3 max-w-md mx-auto"></div>
+  <div id="scr" class="panel p-3 max-w-md mx-auto"></div>
   <p class="text-xs mt-2 text-center opacity-70">● = punto de la ronda. Se confirma al terminar el mazo; el último en levantar se lleva lo que quede en la mesa.</p>
 </section>
 </main>
@@ -197,7 +197,7 @@ function draw(){
   hb.replaceChildren(...G.h[1].map(c=>mk(c,1)));
   tbl.replaceChildren(...G.table.map((c,i)=>{const e=mk(c);G.ts.includes(i)&&e.classList.add('sel');e.onclick=()=>tg(i);return e}));
   const a=stat(0),b=stat(1),p=pts();
-  $('sb').innerHTML=`<table class="w-full text-center"><tr class="gold"><th></th><th>Vos</th><th>Máquina</th></tr>${[['Cartas','c'],['Oros','o'],['Sietes','s'],['7 de oro','v'],['Escobas','e']].map(([l,k])=>`<tr><td class="text-left">${l}</td>${[a,b].map((s,i)=>{const w=s[k]>(i?a:b)[k];return `<td class="${w?'gold font-bold':''}">${s[k]}${w?' ●':''}</td>`}).join('')}</tr>`).join('')}<tr class="border-t border-yellow-700/40"><td class="text-left">Puntos de la ronda</td><td>${p[0]}</td><td>${p[1]}</td></tr><tr class="font-bold gold"><td class="text-left">Partida (a 15)</td><td>${T[0]}</td><td>${T[1]}</td></tr></table>`;
+  $('scr').innerHTML=`<table class="w-full text-center"><tr class="gold"><th></th><th>Vos</th><th>Máquina</th></tr>${[['Cartas','c'],['Oros','o'],['Sietes','s'],['7 de oro','v'],['Escobas','e']].map(([l,k])=>`<tr><td class="text-left">${l}</td>${[a,b].map((s,i)=>{const w=s[k]>(i?a:b)[k];return `<td class="${w?'gold font-bold':''}">${s[k]}${w?' ●':''}</td>`}).join('')}</tr>`).join('')}<tr class="border-t border-yellow-700/40"><td class="text-left">Puntos de la ronda</td><td>${p[0]}</td><td>${p[1]}</td></tr><tr class="font-bold gold"><td class="text-left">Partida (a 15)</td><td>${T[0]}</td><td>${T[1]}</td></tr></table>`;
   $('mazo').textContent='Mazo: '+G.deck.length;info()}
 function pick(i){if(G.busy||G.turn||G.over)return;G.sel=G.sel===i?null:i;G.ts=[];snd('btn');draw()}
 function tg(i){if(G.busy||G.turn||G.over||G.sel===null)return;const k=G.ts.indexOf(i);k<0?G.ts.push(i):G.ts.splice(k,1);snd('btn');draw()}
