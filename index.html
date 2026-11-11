@@ -1,283 +1,248 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="UTF-8">
+<meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>La Escoba de 15 · Reglas, historia y minijuego</title>
-<script src="https://cdn.tailwindcss.com"></script>
-<link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,wght@0,700;1,700&family=Outfit:wght@400;600&display=swap" rel="stylesheet">
+<title>La Escoba de 15: Domina el Clásico Juego de Naipes Argentino</title>
+<script src="https://cdn.tailwindcss.com/3.4.17"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
 <style>
-/* Paleta: paño verde, madera oscura, oro y marfil */
-:root{--felt:#0e3b2c;--felt2:#17593f;--gold:#dcae4e;--ivory:#f7f0dd}
+:root{--gold:#e9c46a;--felt:#0a3a28}
 html{scroll-behavior:smooth}
-body{font-family:Outfit,system-ui,sans-serif;background:var(--felt);color:var(--ivory)}
-.fx{font-family:'Bodoni Moda',Georgia,serif}
-.felt{background:radial-gradient(ellipse at 50% 0,var(--felt2),var(--felt) 70%)}
-.wood{background:repeating-linear-gradient(95deg,#2b180c,#35200f 6px,#2b180c 14px)}
-/* Carta española: número arriba, palo al centro, nombre abajo */
-.card{width:84px;height:124px;border-radius:10px;background:var(--ivory);position:relative;border:2px solid #d8c9a0;box-shadow:0 8px 18px #0007;flex:none;user-select:none;transition:translate .2s}
-.card b{position:absolute;top:4px;left:8px;font:700 19px 'Bodoni Moda',serif}
-.card i{position:absolute;inset:0;display:grid;place-items:center;font-style:normal;font-size:46px}
-.card small{position:absolute;bottom:3px;width:100%;text-align:center;font-size:9px;line-height:1.1;color:#444}
-.s0{color:#c28a0c}.s1{color:#b3261e}.s2{color:#1d3557}.s3{color:#3f6b2a}
-.back{background:repeating-linear-gradient(45deg,#7a1e1e,#7a1e1e 6px,#8f2a2a 6px,#8f2a2a 12px);border-color:var(--ivory)}
-.can{cursor:pointer}.can:hover{translate:0 -6px}
-.sel{translate:0 -16px!important;outline:3px solid var(--gold)}
-.fit .card{width:100%;max-width:96px;height:auto;aspect-ratio:84/124;margin:auto}
-.hc{width:104px;height:154px}
-.big .card{width:150px;height:222px;margin:auto}.big .card i{font-size:80px}.big .card b{font-size:30px}
-.btn{padding:.7rem 1.4rem;border-radius:999px;font-weight:600;transition:.2s}
-.btn:hover:not(:disabled){translate:0 -3px;box-shadow:0 8px 20px #dcae4e66}
-.btn:active{scale:.96}.btn:disabled{opacity:.4}
-.gold{background:var(--gold);color:#2b180c}
-.ghost{border:2px solid var(--gold);color:var(--gold)}
-:focus-visible{outline:3px solid var(--gold);outline-offset:3px}
-/* Destello para la celebración de ¡Escoba! */
-.pt{position:absolute;left:50%;top:50%;width:14px;height:14px;background:var(--gold);clip-path:polygon(50% 0,62% 38%,100% 50%,62% 62%,50% 100%,38% 62%,0 50%,38% 38%)}
-@media (prefers-reduced-motion:no-preference){.glow{animation:gl 2.4s ease-in-out infinite}}
-@keyframes gl{50%{box-shadow:0 0 40px 8px #dcae4eaa}}
+body{background:radial-gradient(ellipse at top,#14633f,var(--felt) 70%) fixed;color:#f6efdc;font-family:Georgia,'Times New Roman',serif;line-height:1.6}
+.gold{color:var(--gold)}
+.panel{background:rgba(0,0,0,.3);border:1px solid rgba(233,196,106,.35);border-radius:1rem}
+.wood{background:linear-gradient(135deg,#6b4226,#3b2314);border:2px solid #8b5e34;border-radius:1.5rem}
+.btn{background:linear-gradient(#f3d98b,#c9962f);color:#3a2408;font-weight:700;padding:.6rem 1.2rem;border-radius:.7rem;box-shadow:0 3px 0 #7a5513;display:inline-block}
+.btn:active{transform:translateY(2px);box-shadow:none}
+.btn:disabled{opacity:.4}
+.btn2{background:rgba(0,0,0,.4);color:#fff;border:1px solid #b8892b;box-shadow:none}
+.pc{width:4.2rem;aspect-ratio:2/3;cursor:pointer;filter:drop-shadow(0 4px 6px rgba(0,0,0,.5));flex:none}
+@media(min-width:640px){.pc{width:5rem}}
+.pc svg{width:100%;height:100%;display:block}
+.sel{outline:3px solid var(--gold);outline-offset:2px;border-radius:.5rem;translate:0 -10px}
+h2{font-size:2rem;font-weight:700;margin-bottom:1.5rem}
+button:focus-visible,a:focus-visible{outline:3px solid #fff;outline-offset:2px}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
 </style>
 </head>
 <body>
+<!-- Símbolos de los 4 palos de la baraja española -->
+<svg width="0" height="0" style="position:absolute"><defs>
+<symbol id="so" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10.5" fill="#e9b824" stroke="#7a5200" stroke-width="1.5"/><circle cx="12" cy="12" r="6" fill="none" stroke="#7a5200" stroke-width="1.2"/><circle cx="12" cy="12" r="2.2" fill="#7a5200"/></symbol>
+<symbol id="sc" viewBox="0 0 24 24"><path d="M4 3h16c0 7-3 10-7 10.5V19h4v2H7v-2h4v-5.5C7 13 4 10 4 3z" fill="#c0392b" stroke="#6b1a12"/></symbol>
+<symbol id="se" viewBox="0 0 24 24"><path d="M12 1c3 4 3 9 2 13h3v2h-4v6.5h-2V16H7v-2h3C9 10 9 5 12 1z" fill="#2b5fa8" stroke="#10294f"/></symbol>
+<symbol id="sb" viewBox="0 0 24 24"><path d="M9 3c2-2 4-2 6 0l-1.200 14.500c-.5 3.500-3.100 3.500-3.600 0z" fill="#3a8a3a" stroke="#174a17"/></symbol>
+</defs></svg>
 
-<!-- HERO -->
-<header id="hero" class="felt min-h-screen grid place-items-center text-center px-5 py-20 overflow-hidden">
-  <div class="max-w-3xl">
-    <h1 class="fx text-6xl md:text-8xl leading-none">La Escoba de 15</h1>
-    <p class="mt-5 text-lg md:text-xl opacity-90">El clásico argentino de la baraja española: sumá 15, limpiá la mesa y cantá ¡escoba!</p>
-    <div class="mt-8 flex flex-wrap justify-center gap-3">
-      <a href="#objetivo" class="btn gold">Ver las reglas</a>
-      <a href="#juego" class="btn ghost">Jugar ya</a>
+<button id="mute" class="fixed bottom-4 right-4 z-50 w-12 h-12 rounded-full btn !p-0 text-xl" aria-label="Activar o silenciar sonido">🔊</button>
+
+<!-- 1. HERO -->
+<header id="hero" class="relative min-h-screen flex items-center overflow-hidden">
+  <div id="fl" class="absolute inset-0 pointer-events-none" style="perspective:800px"></div>
+  <div class="relative max-w-6xl mx-auto px-4 py-20 grid lg:grid-cols-2 gap-10 items-center">
+    <div>
+      <h1 class="text-4xl sm:text-6xl font-bold leading-tight">La Escoba de 15: <span class="gold">Domina el Clásico Juego de Naipes Argentino</span></h1>
+      <p class="mt-5 text-lg">Sumá 15, barré la mesa y llevate los oros. Aprendé las reglas y desafiá a la máquina: los puntos se anotan solos.</p>
+      <div class="mt-7 flex flex-wrap gap-3"><a href="#juego" class="btn">Jugar 1v1</a><a href="#reglas" class="btn btn2">Ver las reglas</a></div>
     </div>
-    <div id="fan" class="flex justify-center mt-14 h-44"></div>
+    <div class="wood p-5 sm:p-6">
+      <h2 class="!text-xl !mb-3 gold">Resumen rápido</h2>
+      <dl class="grid grid-cols-[auto,1fr] gap-x-4 gap-y-2">
+        <dt class="gold">Jugadores</dt><dd>2 a 4 (también por parejas)</dd>
+        <dt class="gold">Baraja</dt><dd>Española de 40 cartas</dd>
+        <dt class="gold">Cartas por jugador</dt><dd>3, se reponen hasta agotar el mazo</dd>
+        <dt class="gold">Objetivo</dt><dd>Llegar a 15 puntos</dd>
+        <dt class="gold">Duración</dt><dd>Entre 15 y 30 minutos</dd>
+      </dl>
+    </div>
   </div>
 </header>
 
-<!-- OBJETIVO -->
-<section id="objetivo" class="felt py-24 px-5 text-center">
-  <div class="max-w-4xl mx-auto">
-    <h2 class="fx text-4xl md:text-6xl">Sumar 15, nada más</h2>
-    <p class="mt-4 max-w-2xl mx-auto opacity-90">En tu turno elegís <b>una</b> carta de tu mano y la combinás con <b>una o más</b> cartas de la mesa. Si el total es 15, te las llevás. Si dejás la mesa vacía, es escoba.</p>
-    <div id="eq" class="mt-12 flex flex-wrap items-center justify-center gap-4 text-4xl fx"></div>
-    <p class="mt-6 text-sm opacity-75">Rey de Espadas de tu mano (vale 10) + 4 de Copas + As de Oros (vale 1) = 15</p>
+<main>
+<!-- 2. VALORES -->
+<section id="valores" class="max-w-6xl mx-auto px-4 py-16">
+  <h2 class="rv">El valor de cada carta</h2>
+  <p class="rv mb-6 max-w-2xl">Tocá una carta para ver su valor en el juego. Ojo: las figuras no valen lo que dice su número.</p>
+  <div id="vals" class="grid grid-cols-2 sm:grid-cols-5 gap-5"></div>
+  <div class="panel rv p-5 mt-8 max-w-3xl">
+    <h3 class="gold text-xl font-bold mb-2">¿Por qué la Sota vale 8, el Caballo 9 y el Rey 10?</h3>
+    <p>En las barajas antiguas la numeración seguía de corrido después del 7: la Sota era la octava carta, el Caballo la novena y el Rey la décima. La baraja de 40 cartas quitó los 8 y los 9 físicos, pero las figuras conservaron su lugar en la jerarquía. Por eso llevan impreso 10, 11 y 12 y en la Escoba valen 8, 9 y 10.</p>
   </div>
 </section>
 
-<!-- VALORES -->
-<section id="valores" class="wood py-24 px-5">
-  <div class="max-w-6xl mx-auto">
-    <h2 class="fx text-4xl md:text-6xl text-center">Qué vale cada carta</h2>
-    <p class="text-center mt-3 opacity-90">Tocá una carta para conocer su nombre y su historia.</p>
-    <div id="vals" class="fit grid grid-cols-4 sm:grid-cols-6 lg:grid-cols-12 gap-3 mt-10 text-center"></div>
-    <div id="info" class="mt-8 mx-auto max-w-2xl rounded-2xl bg-black/30 p-6 text-center min-h-[9rem]"><p class="opacity-80">Elegí una carta de arriba.</p></div>
-  </div>
+<!-- 3. REGLAS -->
+<section id="reglas" class="max-w-6xl mx-auto px-4 py-16">
+  <h2 class="rv">Cómo se juega, paso a paso</h2>
+  <ol id="steps" class="grid md:grid-cols-2 gap-5"></ol>
 </section>
 
-<!-- REGLAS: TIMELINE -->
-<section id="reglas" class="felt py-24 px-5">
-  <div class="max-w-3xl mx-auto">
-    <h2 class="fx text-4xl md:text-6xl text-center">Cómo se juega</h2>
-    <ol id="tl" class="relative mt-14 pl-12"><span id="line" class="absolute left-3 top-0 bottom-0 w-1 rounded bg-[#dcae4e]"></span></ol>
-  </div>
+<!-- 4. PUNTOS -->
+<section id="puntos" class="max-w-6xl mx-auto px-4 py-16">
+  <h2 class="rv">Cómo se cuentan los puntos</h2>
+  <div class="panel rv overflow-x-auto"><table class="w-full text-left" id="tabla"></table></div>
+  <p class="rv mt-4 max-w-3xl">Si hay empate en cartas, oros o sietes, ese punto queda desierto: no se lo lleva nadie.</p>
 </section>
 
-<!-- PUNTUACIÓN -->
-<section id="puntos" class="wood py-24 px-5">
-  <div class="max-w-5xl mx-auto">
-    <h2 class="fx text-4xl md:text-6xl text-center">Cómo se suman los puntos</h2>
-    <div class="mt-14 grid md:grid-cols-[auto_1fr] gap-12 items-center">
-      <div id="siete" class="mx-auto text-center max-w-[240px]">
-        <div class="big"></div>
-        <p class="mt-5 fx text-2xl">El siete de velo</p>
-        <p class="text-sm opacity-85 mt-1">El 7 de Oros, también llamado velón (y «guindao» en algunas mesas), es la carta más codiciada: vale un punto por sí sola.</p>
-      </div>
-      <div class="grid sm:grid-cols-2 gap-4">
-        <div class="sc rounded-2xl bg-black/30 p-5"><span class="fx text-5xl text-[#dcae4e]">+1</span><h3 class="font-semibold mt-1">Cada escoba</h3><p class="text-sm opacity-85">Por cada vez que dejás la mesa vacía. La última jugada de la mano no cuenta.</p></div>
-        <div class="sc rounded-2xl bg-black/30 p-5"><span class="fx text-5xl text-[#dcae4e]">+1</span><h3 class="font-semibold mt-1">Más cartas</h3><p class="text-sm opacity-85">Para quien junte mayor cantidad de cartas.</p></div>
-        <div class="sc rounded-2xl bg-black/30 p-5"><span class="fx text-5xl text-[#dcae4e]">+1</span><h3 class="font-semibold mt-1">Más oros</h3><p class="text-sm opacity-85">Para quien junte mayor cantidad de cartas del palo de oros.</p></div>
-        <div class="sc rounded-2xl bg-black/30 p-5"><span class="fx text-5xl text-[#dcae4e]">+1</span><h3 class="font-semibold mt-1">El 7 de Oros</h3><p class="text-sm opacity-85">Para quien se lo lleve. En un empate de cartas u oros, nadie suma ese punto.</p></div>
-      </div>
+<!-- 5. ESTRATEGIA -->
+<section id="estrategia" class="max-w-6xl mx-auto px-4 py-16">
+  <h2 class="rv">Estrategia básica</h2>
+  <div id="tips" class="grid sm:grid-cols-2 lg:grid-cols-4 gap-5"></div>
+</section>
+
+<!-- 6. MINIJUEGO -->
+<section id="juego" class="max-w-4xl mx-auto px-4 py-16">
+  <h2 class="rv">Jugá 1v1 contra la máquina</h2>
+  <p class="rv mb-4">Elegí una carta de tu mano, y marcá las de la mesa: vas a ver la suma. Si llega a 15, tocá “Levantar”. Si no hay jugada posible, tocá “Tirar”. Los puntos se anotan solos y gana quien llegue primero a 15.</p>
+  <div class="wood p-3 sm:p-5 rv">
+    <div class="rounded-2xl p-3 sm:p-5 relative" style="background:radial-gradient(#1b7a4d,#0d4a31);box-shadow:inset 0 0 40px #000a">
+      <div id="hb" class="flex justify-center gap-2 min-h-[6.5rem]"></div>
+      <div id="tbl" class="flex flex-wrap justify-center gap-2 my-5 min-h-[8rem]"></div>
+      <div id="sum" class="text-center min-h-[3.4rem] text-lg" aria-live="polite"></div>
+      <div id="hm" class="flex justify-center gap-2 min-h-[6.5rem] pt-1"></div>
+      <div id="esc" class="absolute inset-0 grid place-items-center pointer-events-none opacity-0 text-5xl sm:text-7xl font-bold gold" style="text-shadow:0 0 20px #f3d98b">¡ESCOBA!</div>
     </div>
   </div>
+  <p id="msg" class="mt-4 text-center min-h-[1.5rem] gold" aria-live="polite"></p>
+  <div class="flex flex-wrap justify-center gap-3 my-3"><button id="up" class="btn" disabled>Levantar</button><button id="dr" class="btn" disabled>Tirar</button><button id="ng" class="btn btn2">Nueva ronda</button><button id="rg" class="btn btn2">Reiniciar partida</button><span id="mazo" class="self-center text-sm"></span></div>
+  <div id="sb" class="panel p-3 max-w-md mx-auto"></div>
+  <p class="text-xs mt-2 text-center opacity-70">● = punto de la ronda. Se confirma al terminar el mazo; el último en levantar se lleva lo que quede en la mesa.</p>
 </section>
+</main>
 
-<!-- MINIJUEGO -->
-<section id="juego" class="felt py-24 px-5">
-  <div class="max-w-5xl mx-auto">
-    <h2 class="fx text-4xl md:text-6xl text-center">Jugá contra la máquina</h2>
-    <p class="text-center mt-3 opacity-90">Elegí una carta de tu mano y, en la mesa, las que sumadas lleguen a 15.</p>
-    <div id="board" class="relative mt-10 rounded-[2rem] border-[14px] border-[#2b180c] bg-[#14523b] p-4 md:p-8 shadow-2xl overflow-hidden">
-      <div class="flex flex-wrap justify-between gap-3 text-sm">
-        <div id="sb0" class="rounded-xl bg-black/30 px-4 py-2"></div>
-        <div id="sb1" class="rounded-xl bg-black/30 px-4 py-2"></div>
-      </div>
-      <div class="mt-4 text-center">
-        <div id="bot" class="flex justify-center -space-x-8 h-[124px]"></div>
-        <p id="bst" class="text-sm mt-2 opacity-80"></p>
-      </div>
-      <div id="table" class="my-6 min-h-[10rem] flex flex-wrap justify-center gap-3"></div>
-      <p id="sum" class="text-center fx text-2xl"></p>
-      <div id="hand" class="mt-4 flex justify-center gap-3 min-h-[9rem]"></div>
-      <div class="mt-5 flex flex-wrap justify-center gap-3">
-        <button id="take" class="btn gold">Levantar</button>
-        <button id="drop" class="btn ghost">Tirar carta</button>
-        <button id="again" class="btn ghost">Nueva partida</button>
-      </div>
-      <p id="msg" class="mt-4 text-center min-h-[3rem]" aria-live="polite"></p>
-      <div id="esc" class="absolute inset-0 grid place-items-center pointer-events-none opacity-0 fx text-6xl md:text-8xl text-[#dcae4e]" style="text-shadow:0 4px 24px #000"></div>
-    </div>
-  </div>
-</section>
-<footer class="wood py-8 text-center text-sm opacity-70">Baraja española de 40 cartas · Buena mano</footer>
+<div id="win" class="fixed inset-0 z-50 hidden place-items-center bg-black/70"><div class="wood p-8 text-center"><p class="text-5xl mb-2">🏆</p><h3 id="wt" class="text-3xl font-bold gold mb-4"></h3><button class="btn" onclick="rst()">Nueva partida</button></div></div>
+
+<footer class="text-center py-10 text-sm opacity-70">Hecho con ♠ ♥ ♦ ♣ para los que todavía cuentan los oros.</footer>
 
 <script>
-/* ---------- Utilidades y datos ---------- */
-const $=s=>document.querySelector(s),
-  RM=matchMedia('(prefers-reduced-motion:reduce)').matches,
-  A=(...a)=>RM||gsap.from(...a);               // animación de entrada (se omite con movimiento reducido)
-const V=n=>n>7?n-2:n,                           // valor en la Escoba: Sota 8, Caballo 9, Rey 10
-  NM={1:'As',10:'Sota',11:'Caballo',12:'Rey'},
-  SU=['●','♥','♠','♣'],SN=['Oros','Copas','Espadas','Bastos'],
-  nm=c=>`${NM[c.n]||c.n} de ${SN[c.s]}`;
-const C=(n,s,cls='',st='')=>`<div class="card s${s} ${cls}" style="${st}" ${cls.includes('can')?'tabindex="0"':''}><b>${n}</b><i>${SU[s]}</i><small>${NM[n]||n} de ${SN[s]}</small></div>`;
-document.addEventListener('keydown',e=>{if(e.key==='Enter'&&e.target.classList.contains('card'))e.target.click()});
-
-/* ---------- Secciones informativas ---------- */
-$('#fan').innerHTML=[[7,0],[5,3],[3,1]].map(([n,s],i)=>C(n,s,'hc',`rotate:${(i-1)*12}deg;margin:0 -6px;transform-origin:50% 100%`)).join('');
-$('#eq').innerHTML=C(12,2)+'<span>+</span>'+C(4,1)+'<span>+</span>'+C(1,0)+'<span>=</span><span class="text-6xl text-[#dcae4e]">15</span>';
-$('#siete .big').innerHTML=C(7,0,'glow');
-
-const INFO=n=>n==1?'Del latín «as», la unidad básica de la moneda romana. Abre la serie del mazo y de la cuenta: vale 1.'
- :n<8?'Carta numeral: vale exactamente lo que dice.'+(n==7?' Después del 7 siguen las figuras.':'')
- :n==10?'Del latín «subtus», «debajo»: el paje o sirviente, la figura de menor rango. Ocupa el lugar del 8, así que vale 8.'
- :n==11?'El caballero montado, un escalón por encima del paje. Ocupa el lugar del 9, así que vale 9.'
- :'La figura mayor del palo. Cierra la escala: vale 10.';
-$('#vals').innerHTML=[1,2,3,4,5,6,7,0,0,10,11,12].map((n,i)=>n?`<button class="vc" data-n="${n}">${C(n,i%4)}<span class="block mt-2 text-sm">vale ${V(n)}</span></button>`
- :`<div class="vc"><div class="fx text-3xl line-through text-white/40 border-2 border-dashed border-white/30 rounded-lg grid place-items-center aspect-[84/124] max-w-[96px] mx-auto">${i+1}</div><span class="block mt-2 text-xs text-white/50">no se usa</span></div>`).join('');
-$('#vals').onclick=e=>{const b=e.target.closest('[data-n]');if(!b)return;const n=+b.dataset.n;
-  $('#info').innerHTML=`<h3 class="fx text-3xl">${NM[n]||n} · vale ${V(n)}</h3><p class="mt-2">${INFO(n)}</p>`;A('#info',{opacity:0,y:12,duration:.35})};
-
-$('#tl').insertAdjacentHTML('beforeend',[
- ['El reparto','Se baraja el mazo de 40 cartas. Cada jugador recibe 3 y se ponen 4 boca arriba en la mesa.'],
- ['Tu turno','Jugás una carta de tu mano. Si podés combinarla con cartas de la mesa para sumar 15, te las llevás. Si no, la dejás en la mesa.'],
- ['¡Escoba!','Si levantás todas las cartas de la mesa, hacés escoba y sumás 1 punto. La última jugada de la mano no cuenta como escoba.'],
- ['Nuevo reparto','Cuando se terminan las manos, se reparten 3 cartas más a cada uno, hasta agotar el mazo. Quien levantó último se queda con lo que quede en la mesa.'],
- ['El recuento','Cada jugador cuenta escobas, cartas, oros y si tiene el 7 de Oros. Se juega hasta un puntaje acordado, por ejemplo 15.']
-].map(([t,p],i)=>`<li class="step relative mb-10"><span class="absolute -left-12 top-0 w-7 h-7 rounded-full gold grid place-items-center font-bold text-sm">${i+1}</span><h3 class="fx text-2xl">${t}</h3><p class="mt-1 opacity-90">${p}</p></li>`).join(''));
-
-/* ---------- Animaciones con scroll ---------- */
 gsap.registerPlugin(ScrollTrigger);
-if(!RM){
-  gsap.from('.hc',{y:-420,rotate:'random(-60,60)',opacity:0,duration:1.1,stagger:.2,ease:'back.out(1.3)'});
-  gsap.to('.hc',{y:-10,duration:2,repeat:-1,yoyo:true,ease:'sine.inOut',stagger:.3,delay:2});
-  gsap.to('#fan',{yPercent:70,ease:'none',scrollTrigger:{trigger:'#hero',start:'top top',end:'bottom top',scrub:true}}); // las cartas se hunden en la mesa
-  gsap.from('#eq>*',{scrollTrigger:{trigger:'#eq',start:'top 85%'},scale:0,rotate:-20,opacity:0,stagger:.25,ease:'back.out(2)'});
-  gsap.from('.vc',{scrollTrigger:{trigger:'#vals',start:'top 85%'},y:-160,rotate:-12,opacity:0,stagger:.06,ease:'power3.out'}); // reparto
-  gsap.fromTo('#line',{scaleY:0},{scaleY:1,transformOrigin:'top',ease:'none',scrollTrigger:{trigger:'#tl',start:'top 60%',end:'bottom 70%',scrub:true}});
-  gsap.utils.toArray('.step').forEach(s=>gsap.from(s,{scrollTrigger:{trigger:s,start:'top 85%'},x:-40,opacity:0}));
-  gsap.from('.sc',{scrollTrigger:{trigger:'#puntos',start:'top 75%'},scale:.6,opacity:0,stagger:.15,ease:'back.out(2)'});
-  gsap.fromTo('#siete',{rotate:-8,y:60},{rotate:8,y:-20,ease:'none',scrollTrigger:{trigger:'#siete',start:'top bottom',end:'bottom top',scrub:1}});
-}
+const $=id=>document.getElementById(id),
+el=(h,c)=>{const d=document.createElement('div');d.className=c;d.innerHTML=h;return d},
+tw=(t,v)=>new Promise(r=>gsap.to(t,{...v,onComplete:r}));
 
-/* ---------- Minijuego 1v1 ---------- */
-let G,botTimer;
-const msg=t=>$('#msg').textContent=t;
+/* ===== Cartas españolas en SVG ===== */
+const V=n=>n<=7?n:n-2, NM={1:'As',10:'Sota',11:'Caballo',12:'Rey'}, SU={o:'Oros',c:'Copas',e:'Espadas',b:'Bastos'},
+P={1:[[50,75]],2:[[50,38],[50,112]],3:[[50,34],[50,75],[50,116]],4:[[30,42],[70,42],[30,108],[70,108]],5:[[30,42],[70,42],[50,75],[30,108],[70,108]],6:[[30,38],[70,38],[30,75],[70,75],[30,112],[70,112]],7:[[30,38],[70,38],[30,75],[70,75],[30,112],[70,112],[50,56]]};
+function card(s,n){
+  const c='#'+{o:'7a5200',c:'8f1d14',e:'1c3f78',b:'1d5a1d'}[s];let b;
+  if(n<=7){const z=n==1?46:24;b=P[n].map(([x,y])=>`<use href="#s${s}" x="${x-z/2}" y="${y-z/2}" width="${z}" height="${z}"/>`).join('')}
+  else b=`<use href="#s${s}" x="25" y="45" width="50" height="50"/><text x="50" y="34" text-anchor="middle" font-size="20">${{10:'🛡️',11:'🐎',12:'👑'}[n]}</text><text x="50" y="118" text-anchor="middle" font-size="10" font-weight="700" fill="${c}">${NM[n].toUpperCase()}</text>`;
+  return `<svg viewBox="0 0 100 150" role="img" aria-label="${NM[n]||n} de ${SU[s]}"><rect x="2" y="2" width="96" height="146" rx="9" fill="#fbf3dc" stroke="${c}" stroke-width="3"/><rect x="8" y="8" width="84" height="134" rx="6" fill="none" stroke="${c}" stroke-opacity=".35"/><text x="13" y="24" font-size="15" font-weight="700" fill="${c}" font-family="Georgia">${n}</text><text x="87" y="140" text-anchor="end" font-size="15" font-weight="700" fill="${c}" font-family="Georgia">${n}</text>${b}</svg>`}
+const back=()=>`<svg viewBox="0 0 100 150"><rect x="2" y="2" width="96" height="146" rx="9" fill="#9b1c1c" stroke="#f3d98b" stroke-width="3"/><rect x="10" y="10" width="80" height="130" rx="5" fill="none" stroke="#f3d98b" stroke-dasharray="3 3"/><use href="#so" x="30" y="55" width="40" height="40"/></svg>`;
 
-function newGame(){
-  clearTimeout(botTimer);
-  const d=[];for(let s=0;s<4;s++)for(const n of [1,2,3,4,5,6,7,10,11,12])d.push({n,s});
-  for(let i=d.length-1;i>0;i--){const j=Math.random()*(i+1)|0;[d[i],d[j]]=[d[j],d[i]]}
-  G={deck:d,table:d.splice(0,4),hand:d.splice(0,3),bot:d.splice(0,3),pile:[[],[]],esc:[0,0],turn:0,hi:null,ts:[],last:null,over:false};
-  msg('Tu turno: elegí una carta de tu mano.');render();A('#hand .card,#table .card',{y:-80,opacity:0,stagger:.08,duration:.4});
-}
+/* ===== Sonido (Web Audio API, sin archivos) ===== */
+let AC,muted=false;
+const A=()=>{AC=AC||new(window.AudioContext||window.webkitAudioContext)();AC.state=='suspended'&&AC.resume();return AC};
+function tone(f,t,d,ty='sine',v=.15){const a=A(),o=a.createOscillator(),g=a.createGain(),s=a.currentTime+t;o.type=ty;o.frequency.value=f;g.gain.setValueAtTime(v,s);g.gain.exponentialRampToValueAtTime(.001,s+d);o.connect(g).connect(a.destination);o.start(s);o.stop(s+d)}
+function noise(d,v=.4){const a=A(),n=a.sampleRate*d,b=a.createBuffer(1,n,a.sampleRate),x=b.getChannelData(0);for(let i=0;i<n;i++)x[i]=(Math.random()*2-1)*(1-i/n);const s=a.createBufferSource(),f=a.createBiquadFilter(),g=a.createGain();f.type='lowpass';f.frequency.value=1800;g.gain.value=v;s.buffer=b;s.connect(f).connect(g).connect(a.destination);s.start()}
+const SND={card(){noise(.08);tone(110,0,.1,'triangle',.3)},btn(){tone(880,0,.06,'square',.04)},escoba(){[660,880,1100,1320,1760].forEach((f,i)=>tone(f,i*.08,.3,'triangle',.12))},win(){[523,659,784,1047,784,1047,1319].forEach((f,i)=>tone(f,i*.12,.35,'triangle',.14))}};
+const snd=k=>{if(!muted)try{SND[k]()}catch(e){}};
+$('mute').onclick=()=>{muted=!muted;$('mute').textContent=muted?'🔇':'🔊';snd('btn')};
+document.addEventListener('click',e=>{if(e.target.closest('.btn,[data-s]'))snd('btn')});
 
-function render(){
-  const t=G.turn===0&&!G.over;
-  $('#table').innerHTML=G.table.map((c,i)=>C(c.n,c.s,(t&&G.hi!=null?'can ':'')+(G.ts.includes(i)?'sel':''))).join('');
-  $('#hand').innerHTML=G.hand.map((c,i)=>C(c.n,c.s,(t?'can ':'')+(G.hi===i?'sel':''))).join('');
-  $('#bot').innerHTML=G.bot.map(()=>'<div class="card back"></div>').join('');
-  [0,1].forEach(w=>{const p=G.pile[w];$('#sb'+w).innerHTML=`<b>${w?'Bot':'Vos'}</b> · ${G.esc[w]} escobas · ${p.length} cartas · ${p.filter(x=>!x.s).length} oros`});
-  const s=G.hi==null?0:V(G.hand[G.hi].n)+G.ts.reduce((a,i)=>a+V(G.table[i].n),0);
-  $('#sum').textContent=G.hi==null?'':`Suma: ${s} / 15`;
-  $('#take').disabled=!t||G.hi==null||!G.ts.length||s!=15;
-  $('#drop').disabled=!t||G.hi==null||G.ts.length>0;
-  $('#bst').textContent=`Bot · mazo: ${G.deck.length} cartas`+(G.turn===1&&!G.over?' · pensando…':'');
-}
+/* ===== Destellos ===== */
+function burst(x,y,n=24){for(let i=0;i<n;i++){const s=document.createElement('span');s.textContent=['✨','⭐','🪙'][i%3];s.style.cssText=`position:fixed;left:${x}px;top:${y}px;z-index:99;pointer-events:none;font-size:${14+Math.random()*16}px`;document.body.appendChild(s);gsap.to(s,{x:(Math.random()-.5)*500,y:(Math.random()-.8)*400,rotation:Math.random()*720,opacity:0,duration:1.2+Math.random(),ease:'power2.out',onComplete:()=>s.remove()})}}
 
-// Selección: primero la mano, después la mesa
-$('#hand').onclick=e=>{const c=e.target.closest('.card');if(!c||G.turn||G.over)return;
-  const i=[...c.parentNode.children].indexOf(c);G.hi=G.hi===i?null:i;G.ts=[];render()};
-$('#table').onclick=e=>{const c=e.target.closest('.card');if(!c||G.turn||G.over)return;
-  if(G.hi==null)return msg('Primero elegí una carta de tu mano.');
-  const i=[...c.parentNode.children].indexOf(c);G.ts=G.ts.includes(i)?G.ts.filter(x=>x!=i):[...G.ts,i];render()};
-$('#take').onclick=()=>play(0,G.hi,G.ts);
-$('#drop').onclick=()=>play(0,G.hi,[]);
-$('#again').onclick=newGame;
+/* ===== Hero: naipes repartidos y flotando en 3D ===== */
+[...Array(9)].forEach((_,i)=>{
+  const e=el(card('oceb'[i%4],[1,7,12,5,11,3,10,7,2][i]),'pc');
+  e.style.cssText=`position:absolute;left:${(i*11+3)%90}%;top:${(i*23+8)%78}%;opacity:.55;width:${4+i%3}rem`;
+  $('fl').append(e);gsap.set(e,{rotation:(i*37%40)-20});
+  gsap.from(e,{x:()=>innerWidth/2-e.offsetLeft,y:()=>innerHeight/3-e.offsetTop,rotation:360,opacity:0,duration:1.4,delay:i*.12,ease:'power3.out'});
+  gsap.to(e,{y:(i%2?-1:1)*28,rotationY:30,duration:3+i%3,yoyo:true,repeat:-1,ease:'sine.inOut',delay:2+i*.1})});
+gsap.to('#fl',{yPercent:-25,ease:'none',scrollTrigger:{trigger:'#hero',scrub:true,start:'top top',end:'bottom top'}});
 
-// Ejecuta una jugada (w: 0 jugador, 1 bot; hi: carta de la mano; ts: cartas de la mesa)
-function play(w,hi,ts){
-  const c=(w?G.bot:G.hand).splice(hi,1)[0];let m=`${w?'El bot jugó':'Jugaste'} ${nm(c)}`,esc=false,deal=false;
-  if(ts.length){
-    const tk=ts.map(i=>G.table[i]);
-    G.table=G.table.filter((_,i)=>!ts.includes(i));G.pile[w].push(c,...tk);G.last=w;
-    m+=` y ${w?'levantó':'levantaste'} ${tk.map(nm).join(', ')}.`;
-    if(!G.table.length&&(G.deck.length||G.hand.length||G.bot.length)){G.esc[w]++;esc=true;m+=' ¡Escoba!'}
-  }else{G.table.push(c);m+=' y quedó en la mesa.'}
-  G.hi=null;G.ts=[];
-  if(!G.hand.length&&!G.bot.length){
-    if(!G.deck.length)return end(m);
-    G.hand=G.deck.splice(0,3);G.bot=G.deck.splice(0,3);deal=true;
-  }
-  G.turn=w?0:1;msg(m);render();
-  if(esc)escoba(w);
-  else if(!ts.length)A('#table .card:last-child',{y:w?-120:140,opacity:0,duration:.4});
-  if(deal)A('#hand .card',{y:100,opacity:0,stagger:.12});
-  if(G.turn)botTimer=setTimeout(botMove,1300);
-}
+/* ===== Valores ===== */
+[1,2,3,4,5,6,7,10,11,12].forEach((n,i)=>{
+  const s='ocebo'[i%4],d=el(`<div class="pc !w-full max-w-[7rem] mx-auto">${card(s,n)}</div><p class="mt-2 font-bold">${NM[n]||n} (${n})</p><p class="gold" data-v>= ${V(n)}${n>7?' puntos':''}</p>`,'rv text-center');
+  d.firstChild.onclick=()=>{snd('card');gsap.fromTo(d.firstChild,{rotationY:0,scale:1.12},{rotationY:360,scale:1,duration:.6});gsap.fromTo(d.querySelector('[data-v]'),{scale:1.6},{scale:1,duration:.4})};
+  $('vals').append(d)});
 
-// IA simple: prioriza escoba, luego más cartas, oros y el 7 de Oros; si no puede sumar, descarta la carta menos valiosa
-function botMove(){
-  if(G.turn!==1||G.over)return;
-  let best=null;
-  G.bot.forEach((c,hi)=>{
-    for(let m=1;m<1<<G.table.length;m++){
-      const ix=G.table.map((_,i)=>i).filter(i=>m>>i&1),cs=ix.map(i=>G.table[i]);
-      if(cs.reduce((a,x)=>a+V(x.n),V(c.n))!==15)continue;
-      const all=[c,...cs],sc=all.length+(ix.length===G.table.length?10:0)+all.filter(x=>!x.s).length*1.5+(all.some(x=>!x.s&&x.n==7)?5:0);
-      if(!best||sc>best.sc)best={hi,ix,sc};
-    }
-  });
-  if(!best){
-    const w=x=>V(x.n)+(!x.s?5:0)+(!x.s&&x.n==7?20:0);let hi=0;
-    G.bot.forEach((c,i)=>{if(w(c)<w(G.bot[hi]))hi=i});best={hi,ix:[]};
-  }
-  play(1,best.hi,best.ix);
-}
+/* ===== Reglas ===== */
+[['Reparto inicial','Se reparten 3 cartas a cada jugador y 4 boca arriba en la mesa. Cuando todos se quedan sin cartas, se reparten 3 más hasta agotar el mazo.'],
+['Tu turno','Bajás una carta de tu mano y sumás exactamente 15 con ella y una o más cartas de la mesa. Te llevás todas esas cartas.'],
+['Si no suma 15','Si ninguna combinación da 15, la carta queda en la mesa y juega el rival.'],
+['¡Escoba!','Si al levantar te llevás todas las cartas de la mesa, hacés escoba y ganás 1 punto extra.'],
+['Elegí bien','Si podés sumar 15 de varias formas, elegís vos: priorizá los oros y los sietes.'],
+['Fin de ronda','Cuando se juega la última carta, lo que queda en la mesa se lo lleva quien levantó último. Después se cuentan los puntos.']]
+.forEach(([t,x],i)=>$('steps').append(el(`<span class="w-10 h-10 rounded-full btn !p-0 grid place-items-center flex-none">${i+1}</span><div><h3 class="font-bold text-lg gold">${t}</h3><p>${x}</p></div>`,'panel rv p-4 flex gap-4')));
 
-// Recuento final
-function end(m){
-  G.over=true;G.turn=-1;
-  if(G.table.length&&G.last!=null)G.pile[G.last].push(...G.table);G.table=[];
-  const st=[0,1].map(w=>{const p=G.pile[w];return{e:G.esc[w],c:p.length,o:p.filter(x=>!x.s).length,s:p.some(x=>!x.s&&x.n==7)}});
-  const pts=[0,1].map(w=>st[w].e+(st[w].c>st[1-w].c)+(st[w].o>st[1-w].o)+st[w].s);
-  render();
-  msg(`${m} Fin de la mano: Vos ${pts[0]} · Bot ${pts[1]} (escobas, cartas, oros y 7 de Oros). ${pts[0]>pts[1]?'¡Ganaste!':pts[0]<pts[1]?'Ganó el bot.':'Empate.'}`);
-}
+/* ===== Puntos ===== */
+$('tabla').innerHTML='<tr class="gold border-b border-yellow-700/40"><th class="p-3">Punto</th><th>Vale</th><th class="pr-3">Quién lo gana</th></tr>'+
+[['Cartas','1','Quien juntó más cartas en total.'],['Oros','1','Quien juntó más cartas de oro.'],['Siete velo (7 de oro)','1','Punto propio; además cuenta para oros, sietes y cartas.'],['Sietes','1','Quien juntó más sietes.'],['Escobas','1 c/u','Cada vez que dejás la mesa vacía.']]
+.map(r=>`<tr class="border-b border-yellow-700/20"><td class="p-3 font-bold">${r[0]}</td><td>${r[1]}</td><td class="pr-3">${r[2]}</td></tr>`).join('');
 
-// Celebración: cartel + destellos
-function escoba(w){
-  const o=$('#esc');o.textContent=w?'¡Escoba del bot!':'¡Escoba!';
-  gsap.timeline().fromTo(o,{scale:RM?1:.2,rotate:RM?0:-12,autoAlpha:1},{scale:1,rotate:0,duration:.6,ease:'back.out(2)'}).to(o,{autoAlpha:0,duration:.4},'+=.9');
-  if(RM)return;
-  for(let i=0;i<30;i++){
-    const p=document.createElement('span');p.className='pt';$('#board').appendChild(p);
-    gsap.fromTo(p,{x:0,y:0,scale:1.2},{x:gsap.utils.random(-260,260),y:gsap.utils.random(-180,180),scale:0,rotate:360,duration:1.2,ease:'power2.out',onComplete:()=>p.remove()});
-  }
-}
+/* ===== Estrategia ===== */
+[['o','Guardá los sietes','Combinan con muchas cartas (7 + Sota = 15) y valen un punto.'],['e','No regales escobas','Evitá dejar la mesa sumando 15 con una sola carta.'],['c','Contá los oros','Son 10: con 6 asegurás el punto de oros.'],['b','Protegé el 7 de oro','Es la carta más valiosa: levantala antes que tu rival.']]
+.forEach(([s,t,x])=>$('tips').append(el(`<svg viewBox="0 0 24 24" class="w-10 h-10 mb-2"><use href="#s${s}"/></svg><h3 class="font-bold gold">${t}</h3><p>${x}</p>`,'panel rv p-4')));
 
+/* ===== Partida: puntos acumulados hasta 15 ===== */
+let T=[0,0];
+const rst=()=>{T=[0,0];$('win').classList.replace('grid','hidden');newGame()};
+
+/* ===== Minijuego 1v1 ===== */
+let G;const hm=$('hm'),hb=$('hb'),tbl=$('tbl'),msg=$('msg'),say=t=>msg.textContent=t,
+sum=a=>a.reduce((t,c)=>t+c.v,0),
+shuf=a=>{for(let i=a.length;i>1;){const j=Math.random()*i--|0;[a[i],a[j]]=[a[j],a[i]]}return a},
+deal=()=>{for(let i=0;i<3;i++)G.h.forEach(h=>h.push(G.deck.pop()))},
+stat=p=>{const c=G.cap[p];return{c:c.length,o:c.filter(x=>x.s=='o').length,s:c.filter(x=>x.n==7).length,v:c.some(x=>x.s=='o'&&x.n==7)?1:0,e:G.esc[p]}},
+pts=()=>{const a=stat(0),b=stat(1),p=[a.e+a.v,b.e+b.v];['c','o','s'].forEach(k=>{if(a[k]>b[k])p[0]++;else if(b[k]>a[k])p[1]++});return p};
+function combos(c,t){const r=[];for(let m=1;m<1<<t.length;m++){const s=[];let sm=c.v;t.forEach((x,i)=>{if(m>>i&1){s.push(i);sm+=x.v}});if(sm==15)r.push(s)}return r}
+function newGame(){const d=[];for(const s of 'oceb')for(const n of [1,2,3,4,5,6,7,10,11,12])d.push({s,n,v:V(n)});shuf(d);
+  G={deck:d,table:d.splice(0,4),h:[[],[]],cap:[[],[]],esc:[0,0],turn:0,last:-1,sel:null,ts:[],busy:false,over:false};deal();say('Tu turno: elegí una carta de tu mano.');draw()}
+function draw(){
+  const mk=(c,f)=>el(f?back():card(c.s,c.n),'pc');
+  hm.replaceChildren(...G.h[0].map((c,i)=>{const e=mk(c);G.sel===i&&e.classList.add('sel');e.onclick=()=>pick(i);return e}));
+  hb.replaceChildren(...G.h[1].map(c=>mk(c,1)));
+  tbl.replaceChildren(...G.table.map((c,i)=>{const e=mk(c);G.ts.includes(i)&&e.classList.add('sel');e.onclick=()=>tg(i);return e}));
+  const a=stat(0),b=stat(1),p=pts();
+  $('sb').innerHTML=`<table class="w-full text-center"><tr class="gold"><th></th><th>Vos</th><th>Máquina</th></tr>${[['Cartas','c'],['Oros','o'],['Sietes','s'],['7 de oro','v'],['Escobas','e']].map(([l,k])=>`<tr><td class="text-left">${l}</td>${[a,b].map((s,i)=>{const w=s[k]>(i?a:b)[k];return `<td class="${w?'gold font-bold':''}">${s[k]}${w?' ●':''}</td>`}).join('')}</tr>`).join('')}<tr class="border-t border-yellow-700/40"><td class="text-left">Puntos de la ronda</td><td>${p[0]}</td><td>${p[1]}</td></tr><tr class="font-bold gold"><td class="text-left">Partida (a 15)</td><td>${T[0]}</td><td>${T[1]}</td></tr></table>`;
+  $('mazo').textContent='Mazo: '+G.deck.length;info()}
+function pick(i){if(G.busy||G.turn||G.over)return;G.sel=G.sel===i?null:i;G.ts=[];snd('btn');draw()}
+function tg(i){if(G.busy||G.turn||G.over||G.sel===null)return;const k=G.ts.indexOf(i);k<0?G.ts.push(i):G.ts.splice(k,1);snd('btn');draw()}
+function info(){
+  const e=$('sum'),up=$('up'),dr=$('dr');
+  if(G.sel===null||G.over||G.turn){e.innerHTML='';up.disabled=dr.disabled=true;return}
+  const c=G.h[0][G.sel],cs=G.ts.map(i=>G.table[i]),s=c.v+sum(cs),ok=s==15,cm=combos(c,G.table).length;
+  e.innerHTML=`<span class="inline-block px-4 py-1 rounded-full bg-black/50 ${ok?'gold font-bold':''}">${[c,...cs].map(x=>x.v).join(' + ')}${cs.length?' = '+s:''} ${ok?'✓ ¡Levantá!':s<15?`(faltan ${15-s})`:'(te pasaste)'}</span><div class="text-xs opacity-80">${ok?'':cm?'Con esa carta hay jugada: tenés que levantar.':'No hay jugada con esa carta: podés tirarla.'}</div>`;
+  up.disabled=!ok;dr.disabled=!!cm}
+$('up').onclick=()=>{if(G.busy||G.turn||G.over||G.sel===null)return;if(G.h[0][G.sel].v+sum(G.ts.map(i=>G.table[i]))!=15)return say('Las cartas marcadas no suman 15.');move(0,G.sel,[...G.ts])};
+$('dr').onclick=()=>{if(G.busy||G.turn||G.over||G.sel===null)return;if(combos(G.h[0][G.sel],G.table).length)return say('Con esa carta hay jugada: tenés que levantar.');move(0,G.sel,[])};
+$('ng').onclick=newGame;$('rg').onclick=rst;
+const fly=(e,t)=>{const a=e.getBoundingClientRect(),b=t.getBoundingClientRect();return tw(e,{x:b.left+b.width/2-a.left-a.width/2,y:b.top+b.height/2-a.top-a.height/2,duration:.45,ease:'power2.inOut',zIndex:20})};
+async function move(p,hi,ti){
+  G.busy=true;$('up').disabled=$('dr').disabled=true;const he=(p?hb:hm).children[hi],c=G.h[p].splice(hi,1)[0],te=[...tbl.children];
+  if(ti.length){
+    await fly(he,te[ti[0]]);snd('card');const g=ti.map(i=>G.table[i]);
+    await tw([he,...ti.map(i=>te[i])],{y:p?-140:140,opacity:0,scale:.4,duration:.4,stagger:.04});
+    G.cap[p].push(c,...g);G.table=G.table.filter((_,i)=>!ti.includes(i));G.last=p;
+    if(!G.table.length){G.esc[p]++;escoba(p)}
+  }else{await fly(he,tbl);snd('card');G.table.push(c)}
+  G.sel=null;G.ts=[];G.busy=false;
+  if(!G.h[0].length&&!G.h[1].length){G.deck.length?deal():G.over=true}
+  if(G.over)return finish();
+  G.turn=1-p;draw();
+  if(G.turn){if(p==0)say('Turno de la máquina…');setTimeout(bot,1000)}else if(!msg.textContent.includes('Escoba')&&!msg.textContent.includes('ESCOBA'))say('Tu turno.')}
+function escoba(p){
+  snd('escoba');say(p?'¡Escoba de la máquina!':'¡ESCOBA! +1 punto para vos');const r=tbl.getBoundingClientRect();burst(r.left+r.width/2,r.top+r.height/2,30);
+  gsap.fromTo('#esc',{opacity:1,scale:.3,rotation:-10},{scale:1.2,rotation:0,duration:.5,ease:'back.out(3)'});gsap.to('#esc',{opacity:0,delay:1.2,duration:.4})}
+function bot(){
+  const t=G.table;let best,bs=-1,low=0,ls=99;
+  G.h[1].forEach((c,i)=>{
+    combos(c,t).forEach(m=>{const g=[c,...m.map(j=>t[j])];const s=g.length+g.reduce((a,x)=>a+(x.s=='o'?3:0)+(x.n==7?4:0)+(x.n==7&&x.s=='o'?6:0),0)+(m.length==t.length?9:0);if(s>bs){bs=s;best=[i,m]}});
+    const k=(c.s=='o'?3:0)+(c.n==7?5:0)+(c.s=='o'&&c.n==7?9:0);if(k<ls){ls=k;low=i}});
+  best?move(1,...best):move(1,low,[])}
+function finish(){
+  if(G.last>=0)G.cap[G.last].push(...G.table);G.table=[];const p=pts();T[0]+=p[0];T[1]+=p[1];draw();
+  const w=(T[0]>=15||T[1]>=15)&&T[0]!=T[1];
+  say(`Fin de la ronda: +${p[0]} para vos, +${p[1]} para la máquina.${w?'':' Tocá “Nueva ronda” para seguir.'}`);
+  if(w){const me=T[0]>T[1];$('wt').textContent=me?'¡Ganaste la partida!':'Ganó la máquina';$('win').classList.replace('hidden','grid');gsap.from('#win .wood',{scale:.4,rotation:-8,duration:.6,ease:'back.out(2)'});if(me){snd('win');burst(innerWidth/2,innerHeight/2,60)}}
+  else if(p[0]>p[1]){snd('win');burst(innerWidth/2,innerHeight/2,30)}}
 newGame();
+
+/* ===== Animaciones de scroll (ScrollTrigger) ===== */
+gsap.utils.toArray('.rv').forEach(e=>gsap.from(e,{y:50,opacity:0,duration:.8,ease:'power2.out',scrollTrigger:{trigger:e,start:'top 90%',once:true}}));
 </script>
 </body>
 </html>
